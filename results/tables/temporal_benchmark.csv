@@ -1,0 +1,10 @@
+Model,Temporal_Acc,Temporal_F1
+LogReg,0.6182,0.4994
+SVM,0.6525,0.4698
+AdaBoost,0.5365,0.3785
+RandomForest,0.7035,0.6797
+XGBoost,0.6063,0.5748
+LightGBM,0.6396,0.6025
+MLP,0.688,0.6214
+FT-Transformer,0.6359,0.4613
+TabNet,0.7363,0.7152
