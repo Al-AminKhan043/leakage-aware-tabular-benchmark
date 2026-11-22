@@ -8,3 +8,4 @@ venv/
 .env
 data/thesis_dataset.csv
 data/thesis_clean.csv
+ICCIT_camera_ready_repo/
