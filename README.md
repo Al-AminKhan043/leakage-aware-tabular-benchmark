@@ -1,6 +1,6 @@
 # Duplicate Feature Signatures Inflate Tabular Model Accuracy
 
-A leakage-aware re-benchmark of nine tabular ML models on a real industrial quality-prediction dataset, showing that a standard random train/test split silently leaks 97.5% of the data through duplicate feature signatures — and that fixing this **reorders which model looks best**.
+A leakage-aware re-benchmark of nine tabular ML models on a real industrial quality-prediction dataset, showing that a standard random train/test split silently leaks 97.5% of the data through duplicate feature signatures, and that fixing this **reorders which model looks best**.
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Al-AminKhan043/leakage-aware-tabular-benchmark/blob/main/notebooks/01_leakage_diagnosis.ipynb)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Al-AminKhan043/leakage-aware-tabular-benchmark/blob/main/notebooks/02_benchmark.ipynb)
@@ -13,7 +13,7 @@ A leakage-aware re-benchmark of nine tabular ML models on a real industrial qual
 
 ## The problem
 
-Random train/test splitting is the default evaluation protocol in applied tabular ML — but it silently fails when a dataset contains many duplicate feature vectors. In a real industrial textile-chemical quality dataset (9,310 records, 12 features, binary Good/Bad target), **97.5% of records collapse onto only 235 unique feature signatures** once the date column is removed. Under a standard random split, **99.96% of test records have an exact feature twin in training**, and high-capacity models reach 93–94% accuracy — largely by memorizing duplicated signatures rather than generalizing.
+Random train/test splitting is the default evaluation protocol in applied tabular ML, but it silently fails when a dataset contains many duplicate feature vectors. In a real industrial textile-chemical quality dataset (9,310 records, 12 features, binary Good/Bad target), **97.5% of records collapse onto only 235 unique feature signatures** once the date column is removed. Under a standard random split, **99.96% of test records have an exact feature twin in training**, and high-capacity models reach 93–94% accuracy, largely by memorizing duplicated signatures rather than generalizing.
 
 Re-evaluating the same nine models under **signature-grouped cross-validation** drops accuracy to roughly 66–77% (Wilcoxon signed-rank across models, p = 0.004) and reorders the model ranking. A **repeated temporal** (train-past / test-future) protocol lowers it further and shows that single-run results for deep tabular models can move by more than ten accuracy points across seeds.
 
@@ -37,7 +37,7 @@ Reference lines: majority-class baseline **63.6%**, per-signature oracle ceiling
 
 > *Mean accuracies are the output of `results/tables/final_benchmark.csv`, produced by running `02_benchmark.ipynb` end-to-end (all 9 models, `random_state=42`). They match Table II of the paper.*
 
-The models that benefited most from leakage (LightGBM, XGBoost, RandomForest — losing 16–18 points once leakage is removed) are precisely the ones with the capacity to memorize duplicated feature signatures.
+The models that benefited most from leakage (LightGBM, XGBoost, RandomForest, which lose 16–18 points once leakage is removed) are precisely the ones with the capacity to memorize duplicated feature signatures.
 
 ## Camera-ready additions
 
@@ -76,7 +76,7 @@ The camera-ready version adds the following analyses in response to reviewer com
 
 ## Figures
 
-**Signature duplication diagnosis** — 9,310 rows collapse onto 235 unique signatures (97.5% duplication):
+**Signature duplication diagnosis.** The 9,310 rows collapse onto 235 unique signatures (97.5% duplication):
 
 ![Leakage diagnosis](results/figures/leakage_diagnosis.png)
 
@@ -88,7 +88,7 @@ The camera-ready version adds the following analyses in response to reviewer com
 
 ![Three protocols](results/figures/three_protocol.png)
 
-**SHAP feature attribution** (honest-protocol Random Forest) — the model relies on genuine chemical/procurement signal, not identity leakage:
+**SHAP feature attribution** (honest-protocol Random Forest). The model relies on genuine chemical/procurement signal, not identity leakage:
 
 ![SHAP summary](results/figures/shap_summary.png)
 
@@ -123,16 +123,16 @@ The camera-ready version adds the following analyses in response to reviewer com
 └── LICENSE
 ```
 
-**Raw data is not included** — see [`data/README.md`](data/README.md) for the schema and availability note. `final_benchmark.csv` is the complete, authoritative table for the leaky vs. honest comparison.
+**Raw data is not included.** See [`data/README.md`](data/README.md) for the schema and availability note. `final_benchmark.csv` is the complete, authoritative table for the leaky vs. honest comparison.
 
 ## Quickstart
 
-> **Note:** raw data files are not in this repo (see [`data/README.md`](data/README.md)). To execute the notebooks, place your own copies of `thesis_dataset.csv` (and optionally `thesis_clean.csv`) into `data/` first — available on request from the author, subject to the firm's approval. Without them, the code is still fully readable for methodology review, but the cells won't run.
+> **Note:** raw data files are not in this repo (see [`data/README.md`](data/README.md)). To execute the notebooks, place your own copies of `thesis_dataset.csv` (and optionally `thesis_clean.csv`) into `data/` first. They are available on request from the author, subject to the firm's approval. Without them, the code is still fully readable for methodology review, but the cells won't run.
 
-**Option A — Google Colab:**
+**Option A (Google Colab):**
 Click an "Open in Colab" badge above, then upload `thesis_dataset.csv` into the Colab file browser under `data/` before running.
 
-**Option B — Locally:**
+**Option B (locally):**
 ```bash
 git clone https://github.com/Al-AminKhan043/leakage-aware-tabular-benchmark.git
 cd leakage-aware-tabular-benchmark
@@ -141,15 +141,15 @@ pip install -r requirements.txt
 jupyter lab notebooks/01_leakage_diagnosis.ipynb
 ```
 
-Run `01_leakage_diagnosis.ipynb` first — it produces `data/thesis_clean.csv` from the raw file. Then run `02_benchmark.ipynb`, and `03_camera_ready_analysis.ipynb` for the camera-ready analyses. In notebook 03 the classical models run on CPU in a few minutes; set `RUN_DEEP = True` on a GPU runtime to retrain the deep models too (otherwise it summarises the shipped `deep_rows.csv`). For the deep runs outside a notebook: `python analysis/analysis_deep.py data/thesis_clean.csv results/tables --seeds 42,0,1,2,3`.
+Run `01_leakage_diagnosis.ipynb` first. It produces `data/thesis_clean.csv` from the raw file. Then run `02_benchmark.ipynb`, and `03_camera_ready_analysis.ipynb` for the camera-ready analyses. In notebook 03 the classical models run on CPU in a few minutes; set `RUN_DEEP = True` on a GPU runtime to retrain the deep models too (otherwise it summarises the shipped `deep_rows.csv`). For the deep runs outside a notebook: `python analysis/analysis_deep.py data/thesis_clean.csv results/tables --seeds 42,0,1,2,3`.
 
 **Note on hardware:** TabNet and FT-Transformer are each trained for 5 folds × 100 epochs; a GPU is strongly recommended (in Colab: `Runtime > Change runtime type > GPU`). The classical models run fine on CPU.
 
 ## Method summary
 
 1. **Diagnose**: build a per-row *feature signature* (the exact combination of all 12 feature values, excluding `Date` and the target; numeric fields compared without rounding) and count duplicates.
-2. **Leaky protocol**: standard `StratifiedKFold` — the default most practitioners use.
-3. **Honest protocol**: `StratifiedGroupKFold` grouped by signature — guarantees zero signature overlap between train and test.
+2. **Leaky protocol**: standard `StratifiedKFold`, the default most practitioners use.
+3. **Honest protocol**: `StratifiedGroupKFold` grouped by signature, which guarantees zero signature overlap between train and test.
 4. **Temporal protocol**: train on the earliest 80% by date, test on the latest 20%, repeated over same-date orderings (classical) or seeds (deep); plus an expanding-window evaluation.
 5. Nine models are benchmarked identically under all protocols: Logistic Regression, SVM, AdaBoost, Random Forest, XGBoost, LightGBM, MLP, TabNet, and FT-Transformer.
 6. Accuracy, macro-F1 and class-wise sensitivity/specificity are reported, with Wilcoxon, binomial and Spearman tests.
@@ -178,7 +178,7 @@ Thanks to Md. Rashadur Rahman (Department of CSE, CUET) for supervising the unde
 
 ## Author
 
-**Md. Al Amin Khan** — B.Sc. Computer Science and Engineering, Chittagong University of Engineering and Technology (CUET)
+**Md. Al Amin Khan**, B.Sc. Computer Science and Engineering, Chittagong University of Engineering and Technology (CUET)
 [Portfolio](https://next-portfolio-two-lovat.vercel.app/) · [LinkedIn](https://linkedin.com/in/alaminkhan43) · [GitHub](https://github.com/Al-AminKhan043) · [alaminkhan10009@gmail.com](mailto:alaminkhan10009@gmail.com)
 
 ## License
